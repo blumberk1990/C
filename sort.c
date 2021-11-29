@@ -114,15 +114,11 @@ int main() {
     // 3. size of the each element in the array
     // 4. funtion that compares two elements
     //qsort(data, sizeof(data)/sizeof(*data), sizeof(int), compareAscending);
-
     //qsort(data, sizeof(data)/sizeof(*data), sizeof(int), compareDescending);
-
     //qsort(data, sizeof(data)/sizeof(*data), sizeof(int), compareEvenNextOddDescending);
     //qsort(data, sizeof(data)/sizeof(*data), sizeof(int), compareEvenNextOddAscending);
-
     //qsort(data, sizeof(data)/sizeof(*data), sizeof(int), compareOddNextEvenDescending);
     qsort(data, sizeof(data)/sizeof(*data), sizeof(int), compareOddNextEvenAscending);
-    qsort(data, sizeof(data)/sizeof(*data), sizeof(int), compareOddNextEvenAscending);
-    qsort(data, sizeof(data)/sizeof(*data), sizeof(int), compareOddNextEvenAscending);
+ 
     return 0;
 }
