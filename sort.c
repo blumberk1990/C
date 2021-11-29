@@ -122,5 +122,6 @@ int main() {
 
     //qsort(data, sizeof(data)/sizeof(*data), sizeof(int), compareOddNextEvenDescending);
     qsort(data, sizeof(data)/sizeof(*data), sizeof(int), compareOddNextEvenAscending);
+    qsort(data, sizeof(data)/sizeof(*data), sizeof(int), compareOddNextEvenAscending);
     return 0;
 }
