@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct stackEl {
     int value;
@@ -10,15 +11,37 @@ stackEl newStackEl(int value) {
     return el;
 }
 
+void push(stackEl** ptr, int value) {
+    //Allocate memmory for new element; 
+    stackEl* newElement = (stackEl*)malloc(sizeof(stackEl));
+    //*(newElement).value, put value to the adress
+    newElement->value = value;
+    //*(newElement).next, put the value from the address to the address
+    newElement->next = *ptr;
+    //put neElement to the value from the address *ptr
+    *ptr = newElement;
+}
+
+int pop(stackEl** ptr) {
+    int value;
+    stackEl* oldPtr = *ptr;
+    
+    *ptr = (*ptr)->next;
+    value = oldPtr->value;
+
+    free(oldPtr);
+    return value;
+}
+
 int main() {
-    stackEl el1, el2, el3;
+    stackEl* stack = NULL;
+    push(&stack, 1);
+    push(&stack, 2);
+    push(&stack, 3);
 
-    el1 = newStackEl(1);
-    el2 = newStackEl(2);
-    el3 = newStackEl(3);
+    pop(&stack);
+    pop(&stack);
+    pop(&stack);
 
-    el3.next = &el2;
-    el2.next = &el1;
-    el1.next = NULL;
     return 0;
 }
