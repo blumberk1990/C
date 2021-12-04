@@ -9,28 +9,31 @@
 void toLowercase(char* string) {
     for(char *ptr= string; *ptr; ++ptr) {
         *ptr = *ptr >= 0x41 && *ptr <= 0x5A ? *ptr | 0x60 : *ptr;  
-        printf("%c", *ptr);
     }
-    printf("\n");
 }
+
+
+#define ARRAY_LENGHT 33
 
 int main() {
 
-    char array[33];
+    char array[ARRAY_LENGHT];
     int len;
-    const char pop[3] = "pop";
+    const char pop[4] = "pop";
     const char push[5] = "push";
-    
+    char* c;
+
     //Read input
-    while (scanf("%s",array) != EOF)
-    {
+    //fgets works with buffer, so there is nor problem about geting space char
+    while (*(c = fgets(array, ARRAY_LENGHT, stdin)) != EOF)
+    {   
         //change string to lowercase
         toLowercase(array);
-
-        if(strcmp(array, "pop")==0) {
+        //
+        if(strncmp(array, pop, (sizeof(pop)/sizeof(char))-1) == 0) {
             printf("POP is equal\n");
             }
-        else if(strncmp(array, "push", (sizeof("push")/sizeof(char)))==0) {
+        else if(strncmp(array, push, (sizeof(push)/sizeof(char))-1) == 0) {
             printf("PUSH is equal\n");
             }
         else {
