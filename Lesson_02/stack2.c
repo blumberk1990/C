@@ -46,62 +46,53 @@ void toLowercase(char* string) {
     }
 }
 
-// validate date from user, and parse int from string
-int parseValueFromString(char* string) {
-        int value = 0;
-        int factor = 1;
-        int dataValid = 0;
-        int endValue = 0;
-        char sign; 
-        char valueHolder[11]; // max digit for signed int == 11
-        int i=0;
-        //Starting validation after 4 digit
-        for(char *ptr= string+4; *ptr; ++ptr) {
-            if(dataValid==0) {
-                //data validation
-                if(*ptr==' ' && ((*(ptr+1)=='-' && isdigit(*(ptr+2))) || isdigit(*(ptr+1)))) {
-                    dataValid=1;
-                } else{
-                    printf("Wrong input format!!, example: push 2\n");
-                }
-            } else {
-                if(endValue==0) {
-                    if(isdigit(*ptr) && isdigit(*(ptr+1))) {
-                        valueHolder[i] = *ptr;
-                        i++;
-                    } else if(*ptr!='-') {
-                        valueHolder[i] = *ptr;
-                        //end String char
-                        valueHolder[i+1] = 0;
-                        endValue = 1;
-                    } else if(*ptr=='-') {
-                        sign = '-';
-                    }
-                }
-                
-            }
+// Validation of entered data,
+// return:  '-1' - no valid data; 
+// return:  '0' - data valid
+// valueString, output array with value in string format
+int validatePushFunction(char* string, char* valueString) {
+    
+    int dataValid = 0;
+
+    // Starting validation after 4 digits (string+4 = "push")
+    for(char* ptr= string+4; *ptr; ++ptr) {
+        if(*ptr==' ' && ((*(ptr+1)=='-' && isdigit(*(ptr+2))) || isdigit(*(ptr+1)))) {
+            dataValid=1;
+        } else if(!dataValid) {
+            printf("Wrong input format!!, example: push -25\n");
+            return -1;
+        } else if(dataValid) {
+            *valueString = *ptr;
+            valueString++;
         }
-        //i is known from upper function
-        //convert String to int
-        for(i; i>=0; i--) {
-            value += (valueHolder[i] - 0x30)*factor;
-            factor*=10;
-        }
-        //if the value is -, negation of value
-        return value = value && sign!= '-' ? value : (~value)+1;
+    }
+    *valueString = 0;
+    return 0;
 }
 
-
-
-
-
-
-
-
+// Convert string to int
+int stringToValue(char* string) {
+    int value = 0;
+    int factor = 1;
+    int sign = 1;
+    int length = sizeof(*string)/sizeof(char);
+    printf("%d", sizeof(*string)/sizeof(char));
+    // length -1, becaouse array ptr is equal to array[0]
+    for(char *ptr= string + length-1; *ptr; --ptr) {
+        if(*ptr=='-') {
+            sign = -1;
+        } else if(isdigit(*ptr)) {
+            value +=  (*ptr - 0x30)*factor;
+            factor*=10;
+        }
+    }
+    return value*sign;
+}
 
 int main() {
 
     char array[ARRAY_LENGHT];
+    char stringValue[12];
     int len;
     const char popA[4] = "pop";
     const char pushA[5] = "push";
@@ -120,7 +111,9 @@ int main() {
                 pop(&stack);
             }
         else if(strncmp(array, pushA, (sizeof(pushA)/sizeof(char))-1) == 0) {
-                push(&stack, parseValueFromString(array));
+                if(!validatePushFunction(array, stringValue)) {
+                    push(&stack, stringToValue(stringValue));
+                }      
             }
         else {
              printf("%s, funciotn unknown. Please repeat.\n", array);
