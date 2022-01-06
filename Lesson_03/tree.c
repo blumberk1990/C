@@ -63,31 +63,110 @@ void evaluate(Node* element) {
         case '*':
             c= a * b;
             break;
+        case '-':
+            c= a - b;
+            break;
+        case '/':
+            c= a - b;
+            break;
         }
+        
         element->value = c;
         element->isValComputed=1;
     }
 }
 
-int main() {
+Node* newNode(Node element) {
+    Node* newElement = (Node*)malloc(sizeof(Node));
+    *newElement = element;
+    return newElement;
+}
 
-    //1+2*3
-    Node el1, el2, el3, el4, el5;
-    el1 = createValue(1);
-    el2 = createOperation('+');
-    el3 = createValue(2);
-    el4 = createOperation('*');
-    el5 = createValue(3);
+void clearTree(Node* element) {
+    if(element == NULL) 
+        return;
+    clearTree(element->left);
+    clearTree(element->right);
+    free(element);
+}
 
-    el2.left=&el1;
-    el2.right=&el4;
+int isArgument(char c) {
+    return (c>='0' && c<='9');
+}
 
-    el4.left=&el3;
-    el4.right=&el5;
+void parseData(Node** element, char* string, int *stringPtr) {
+    char c = string[*stringPtr];
+    (*stringPtr)++;
+    if(c == 0) 
+        return;
+    if(isArgument(c)) {
+        *element = newNode(createValue(c-'0'));
+    } else {
+        Node* newElement = newNode(createOperation(c));
+        parseData(&(newElement->left), string, stringPtr);
+        parseData(&(newElement->right), string, stringPtr);
+        *element = newElement;
+    }
 
-    printNode(&el2,0);
-    evaluate(&el2);
+}
+
+void convertToPostfix(char input[], char output[])
+{
+    int inputPtr = 0;
+    int outputPtr = 0;
+    int characterMemPtr = 0;
+    char characterMem[10];
+    while(input[inputPtr]!=0) {
+        if(isArgument(input[inputPtr])) {
+            output[outputPtr] = input[inputPtr];
+            inputPtr++;
+            outputPtr++;
+        } else {
+            if(input[inputPtr] != ')') {
+                characterMem[characterMemPtr] = input[inputPtr];
+                inputPtr++;
+                characterMemPtr++;    
+            } else {
+                characterMemPtr--;
+                while(characterMem[characterMemPtr] != '(') {
+                    output[outputPtr] = characterMem[characterMemPtr];
+                    characterMemPtr--;
+                    outputPtr++;
+                }
+                characterMem[characterMemPtr] = 0;
+                inputPtr++;
+            }
+        }
+    }
+    characterMemPtr--;
+    for(; characterMemPtr>=0; --characterMemPtr) {
+        output[outputPtr] = characterMem[characterMemPtr];
+        outputPtr++;
+        inputPtr++;
+    }
+    output[outputPtr] = 0;
+}
+
+int main(int argc, char** argv) {
+
+    //12+
+    char testInput[32] = "1+2";
+    //12+34+*
+    //char testInput[32] = "((1+2)*(3+4))";
+    //123*+
+    //char testInput[32] = "1+2*3";
+    char testOutput[32];
+    convertToPostfix(testInput, testOutput);
+    printf("%s = %s\n", testInput, testOutput);
+
+    Node* root;
+    int inputPtr = 0;
+    parseData(&root, argv[1], &inputPtr);
+
+    printNode(root,0);
+    evaluate(root);
     printf("\n\n\n");
-    printNode(&el2,0);
+    printNode(root,0);
+    clearTree(root);
     return 0;
 }
