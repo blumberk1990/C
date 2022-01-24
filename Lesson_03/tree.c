@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #define NO_OP ' '
+#define BUFF_LENN 32
 
 typedef struct Node {
     char op;
@@ -110,12 +111,11 @@ void parseData(Node** element, char* string, int *stringPtr) {
 
 }
 
-void convertToPostfix(char input[], char output[])
-{
+void convertToPostfix(char input[], char output[]) {
     int inputPtr = 0;
     int outputPtr = 0;
     int characterMemPtr = 0;
-    char characterMem[10];
+    char characterMem[BUFF_LENN];
     while(input[inputPtr]!=0) {
         if(isArgument(input[inputPtr])) {
             output[outputPtr] = input[inputPtr];
@@ -147,17 +147,77 @@ void convertToPostfix(char input[], char output[])
     output[outputPtr] = 0;
 }
 
+int computePostfix(char expr[]) {
+    int exprPtr = 0;
+    int stackPtr = 0;
+    int stack[BUFF_LENN];
+    
+    int a = 0;
+    int b = 0;
+    int c = 0; 
+    //No null element
+    if(expr == NULL) 
+        return 0;
+    while(expr[exprPtr] != 0) {
+        if(isArgument(expr[exprPtr])) {
+            stack[stackPtr] = expr[exprPtr] - '0';
+            stackPtr++;
+        } else {
+            a = stack[--stackPtr]; 
+            b = stack[--stackPtr];
+            switch (expr[exprPtr]) {
+                case '+':
+                    c= a + b;
+                    break;
+                case '*':
+                    c= a * b;
+                    break;
+                case '-':
+                    c= a - b;
+                    break;
+                case '/':
+                    c= a / b;
+                    break;
+            }
+            stack[stackPtr] = c;
+            stackPtr++;
+        }
+        exprPtr++;
+    }
+    return stack[--stackPtr];
+}
+
+int compute(char expr[]) {
+    char postfixExpr[BUFF_LENN];
+    int result = 0;
+    convertToPostfix(expr, postfixExpr);
+    result = computePostfix(postfixExpr);
+    return result;
+}
+
 int main(int argc, char** argv) {
 
-    //12+
-    char testInput[32] = "1+2";
+    //char testInput[32] = "1+2";
     //12+34+*
     //char testInput[32] = "((1+2)*(3+4))";
     //123*+
     //char testInput[32] = "1+2*3";
-    char testOutput[32];
-    convertToPostfix(testInput, testOutput);
-    printf("%s = %s\n", testInput, testOutput);
+    //char testOutput[32];
+    //convertToPostfix(testInput, testOutput);
+    //printf("%s = %s\n", testInput, testOutput);
+
+    //char testInput[BUFF_LENN] = "12+";
+    //char testInput[BUFF_LENN] = "123*+";
+    //char testInput[BUFF_LENN] = "12+3*";
+    //char testInput[BUFF_LENN] = "12+34+*";
+    //int result = computePostfix(testInput);
+    //printf("computePostfix result = %d\n", result);
+    
+    //char testInput[32] = "1+2";
+    //char testInput[32] = "(1+2)*3";
+    char testInput[32] = "((1+2)*(3+4))";
+    int result = compute(testInput);
+    printf("compute result = %d\n", result);
 
     Node* root;
     int inputPtr = 0;
