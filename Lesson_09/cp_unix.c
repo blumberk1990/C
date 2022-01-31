@@ -1,6 +1,6 @@
 #include <sys/types.h>
 #include <unistd.h>
-#include <fcntl.h>f
+#include <fcntl.h>
 #include <stdio.h>
 
 
