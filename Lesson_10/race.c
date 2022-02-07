@@ -8,7 +8,7 @@ CRITICAL_SECTION criticalSection;
 
 DWORD WINAPI threadWork(LPVOID ilParam) {
     for(int i=0; i<100000; i++) {
-        EnterCriticalSection(&criticalSection);
+        EnterCriticalSection(&criticalSection); // Atomic section 
         sum = sum +1;
         LeaveCriticalSection(&criticalSection);
     }
